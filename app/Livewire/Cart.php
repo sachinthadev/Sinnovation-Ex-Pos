@@ -5,6 +5,7 @@ namespace App\Livewire;
 use Livewire\Component;
 use App\Models\Cart as CartModel;
 use App\Models\Order;
+use Carbon\Carbon;
 use App\Models\Product;
 use App\Models\Setting;
 use Livewire\Attributes\On; 
@@ -117,11 +118,15 @@ class Cart extends Component
         $customerIdentifier =  session('customer_identifier');
         $items = $this->cartItems;
 
+        $nowSriLanka = Carbon::now('Asia/Colombo');
+
         $order = Order::create([
             'customer_identifier' => $customerIdentifier,
             'total_price' => $total_price,
             'mileage' => $mileage,
-            'user_id' => auth()->id()
+            'user_id' => auth()->id(),
+            'created_at' => $nowSriLanka,
+            'updated_at' => $nowSriLanka,
         ]);
 
         foreach ($items as $item) {  

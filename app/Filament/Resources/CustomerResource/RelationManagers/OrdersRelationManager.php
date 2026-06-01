@@ -51,8 +51,9 @@ class OrdersRelationManager extends RelationManager
             ])
             ->recordActions([
                 Action::make('Edit')
-                ->url(fn (Order $record) => route('filament.admin.resources.orders.edit', ['record' => $record->id])),
-                DeleteAction::make(),
+                    ->url(fn (Order $record) => route('filament.admin.resources.orders.edit', ['record' => $record->id]))
+                    ->visible(fn () => auth()->user()->role === 'admin'),
+                DeleteAction::make()->visible(fn () => auth()->user()->role === 'admin'),
             ])
             ->toolbarActions([
                 BulkActionGroup::make([

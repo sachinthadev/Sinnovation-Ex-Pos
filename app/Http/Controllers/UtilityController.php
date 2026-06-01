@@ -21,15 +21,17 @@ class UtilityController extends Controller
     public function print($order_id)
     {   
 
-        $order = Order::with('items')->findOrFail( $order_id );
+        $order = Order::with(['items', 'user', 'customer'])->findOrFail( $order_id );
         $currency_symbol = config('settings.currency_symbol');
         $site_name = config('settings.site_name');
         $site_description = config('settings.site_description');
+        
+        $timezone = config('app.timezone', 'UTC');
 
         $data = [
             'invoiceNumber' => $order->id,
-            'date' => $order->created_at->format('M d, Y'),
-            'time' => $order->created_at->format('h:i:s A'),
+            'date' => $order->created_at->timezone($timezone)->format('Y-m-d'),
+            'time' => $order->created_at->timezone($timezone)->format('h:i:s A'),
             'items' => $order->items,
             'order' => $order,
             'currency_symbol' => $currency_symbol,

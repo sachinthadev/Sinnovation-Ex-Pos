@@ -53,6 +53,10 @@ class OrderResource extends Resource
         return $table
             ->columns([
                 TextColumn::make('id')->label('ID')->sortable(),
+                TextColumn::make('customer.vehicle_identifier')
+                    ->label('Vehicle Number')
+                    ->searchable()
+                    ->sortable(),
                 TextColumn::make('customer.first_name')
                             ->label('Customer Name')
                             ->searchable()

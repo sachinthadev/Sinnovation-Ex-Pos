@@ -128,7 +128,6 @@ class ProductResource extends Resource
     {
         return [
             'index' => ListProducts::route('/'),
-            'inventory' => LowStockProducts::route('/inventory'),
             // 'create' => Pages\CreateProduct::route('/create'),
             // 'edit' => Pages\EditProduct::route('/{record}/edit'),
         ];

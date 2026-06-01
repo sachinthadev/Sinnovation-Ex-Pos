@@ -83,4 +83,25 @@
             <span wire:loading wire:target='checkout' class="w-4 h-4 border-2 border-t-red-100 border-transparent rounded-full animate-spin"></span>
         </button>
     </div>
+
+    @if($showMileagePopup)
+    <div class="fixed inset-0 z-50 flex items-center justify-center overflow-auto bg-black bg-opacity-50">
+        <div class="bg-white dark:bg-gray-800 rounded-lg shadow-xl w-full max-w-md p-6 m-4">
+            <h3 class="text-lg font-bold mb-4 dark:text-white">Add Vehicle Mileage</h3>
+            <p class="mb-4 text-gray-600 dark:text-gray-300">Do you want to add the current vehicle mileage to this invoice?</p>
+            
+            <input wire:model.defer="mileage" type="text" placeholder="Enter mileage (e.g. 50000 km)" class="w-full p-2 border border-gray-300 rounded mb-4" />
+            @error('mileage') <span class="text-red-500 text-sm mb-4 block">{{ $message }}</span> @enderror
+
+            <div class="flex justify-end gap-3 mt-6">
+                <button wire:click="confirmCheckoutWithoutMileage" class="px-4 py-2 bg-gray-300 hover:bg-gray-400 text-black rounded">
+                    No, skip mileage
+                </button>
+                <button wire:click="confirmCheckoutWithMileage" class="px-4 py-2 bg-green-500 hover:bg-green-600 text-white rounded">
+                    Add & Save
+                </button>
+            </div>
+        </div>
+    </div>
+    @endif
 </div>

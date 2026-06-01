@@ -13,6 +13,9 @@ class Cart extends Component
 {
     public $cartItems = [];
 
+    public $showMileagePopup = false;
+    public $mileage = '';
+
     public $newServiceVisible = false;
     public $newService = [
         'name' => '',
@@ -79,7 +82,6 @@ class Cart extends Component
 
     public function checkout(){
         
-        $total_price = 0;
         $customerIdentifier =  session('customer_identifier');
 
         if( empty($customerIdentifier) ){
@@ -92,12 +94,35 @@ class Cart extends Component
             return;
         }
 
+        $this->mileage = '';
+        $this->showMileagePopup = true;
+    }
+
+    public function confirmCheckoutWithMileage()
+    {
+        $this->validate(['mileage' => 'required|string|max:255']);
+        $this->showMileagePopup = false;
+        $this->processCheckout($this->mileage);
+    }
+
+    public function confirmCheckoutWithoutMileage()
+    {
+        $this->showMileagePopup = false;
+        $this->processCheckout(null);
+    }
+
+    private function processCheckout($mileage)
+    {
+        $total_price = 0;
+        $customerIdentifier =  session('customer_identifier');
+        $items = $this->cartItems;
+
         $order = Order::create([
             'customer_identifier' => $customerIdentifier,
-            'total_price' => $total_price
+            'total_price' => $total_price,
+            'mileage' => $mileage,
+            'user_id' => auth()->id()
         ]);
-
-        
 
         foreach ($items as $item) {  
             $order->items()->create([
@@ -121,13 +146,11 @@ class Cart extends Component
         $order->total_price = $total_price;
         $order->save();
 
-        $this->cartItems = CartModel::where('user_id', auth()->user()->id)
-                            ->delete();  
+        $this->cartItems = CartModel::where('user_id', auth()->user()->id)->delete();  
 
         $this->dispatch('checkout-completed');
 
         redirect( url('/admin/orders/'. $order->id .'/edit') );
-
     }
 
     public function addServiceRow()

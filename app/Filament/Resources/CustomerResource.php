@@ -59,6 +59,15 @@ class CustomerResource extends Resource
                     ->helperText('Optional vehicle model.'),
                 Textarea::make('address')
                     ->nullable(),
+                \Filament\Schemas\Components\Section::make('Statistics')
+                    ->schema([
+                        Forms\Components\Placeholder::make('completed_orders_count')
+                            ->label('Completed Orders Count')
+                            ->content(fn (?Customer $record): string => $record ? (string) $record->orders()->completedOrders()->count() : '0'),
+                        Forms\Components\Placeholder::make('total_orders_count')
+                            ->label('Total Orders Count')
+                            ->content(fn (?Customer $record): string => $record ? (string) $record->orders()->count() : '0'),
+                    ])->hidden(fn (?Customer $record) => $record === null),
             ]);
     }
 

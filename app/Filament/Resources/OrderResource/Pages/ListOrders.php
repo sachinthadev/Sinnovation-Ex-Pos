@@ -26,17 +26,13 @@ class ListOrders extends ListRecords
     {
         return [
             Action::make('orders')
-                ->label('Orders')
+                ->label('Active Orders')
                 ->url(fn () => url('/admin/orders'))
                 ->icon('heroicon-o-shopping-bag'),
             Action::make('completed')
                 ->label('Completed Orders')
                 ->url(fn () => url('/admin/orders/completed'))
                 ->icon('heroicon-o-check-badge'),
-            Action::make('inventory')
-                ->label('Inventory')
-                ->url(fn () => url('/admin/products/inventory'))
-                ->icon('heroicon-o-cube-transparent'),
             CreateAction::make()->visible(fn () => auth()->user()->role === 'admin'),
             ExportAction::make()
                 ->exports([
@@ -56,7 +52,7 @@ class ListOrders extends ListRecords
 
     protected function getTableQuery(): Builder
     {
-        return Order::query()->openToday();
+        return Order::query()->whereDate('created_at', now()->toDateString());
     }
 
     protected function getWidgets(): array

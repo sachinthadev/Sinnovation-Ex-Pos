@@ -36,6 +36,7 @@ class OrdersRelationManager extends RelationManager
     {
         return $table
             ->recordTitleAttribute('id')
+            ->modifyQueryUsing(fn (Builder $query) => $query->completedOrders())
             ->columns([
                 TextColumn::make('id')
                     ->label('ID'),

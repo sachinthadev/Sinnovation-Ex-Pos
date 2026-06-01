@@ -20,13 +20,6 @@ class EditOrder extends EditRecord
     protected function getHeaderActions(): array
     {
         return [
-            Action::make('addService')
-                ->label('Add Service')
-                ->icon('heroicon-o-plus')
-                ->color('secondary')
-                ->extraAttributes(fn () => [
-                    'x-on:click' => new HtmlString("window.livewire && window.livewire.emit('openCustomServiceRow')"),
-                ]),
             Action::make('print')
                 ->label('Print')
                 ->livewireClickHandlerEnabled(false)

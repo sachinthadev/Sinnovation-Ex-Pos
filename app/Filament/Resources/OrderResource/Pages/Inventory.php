@@ -24,7 +24,7 @@ class Inventory extends Page
     {
         return [
             Action::make('orders')
-                ->label('Orders')
+                ->label('Active Orders')
                 ->url(fn () => url('/admin/orders'))
                 ->icon('heroicon-o-shopping-bag'),
             Action::make('completed')

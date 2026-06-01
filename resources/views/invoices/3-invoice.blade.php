@@ -90,6 +90,38 @@
         .mt-0{
             margin-top: 0;
         }
+
+        /* ── Customer details two-column block ── */
+        .customer-section {
+            margin-bottom: 3mm;
+            border-top: 1px dashed #999;
+            border-bottom: 1px dashed #999;
+            padding: 2mm 0;
+        }
+        .customer-section h3 {
+            text-align: center;
+            font-family: 'Courier New', Courier, monospace;
+            font-size: 12px;
+            margin: 0 0 2mm 0;
+            padding: 0;
+            letter-spacing: 1px;
+        }
+        .two-col {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        .two-col td {
+            padding: 1mm 0;
+            font-size: 13px;
+            vertical-align: top;
+        }
+        .two-col .col-label {
+            width: 45%;
+            font-weight: bold;
+        }
+        .two-col .col-value {
+            width: 55%;
+        }
     </style>
 </head>
 <body>
@@ -98,12 +130,50 @@
         <h1 class="text-center" style="margin-bottom:0; font-family: 'Courier New', Courier, monospace">
             {{$site_name}}
         </h1>
-        <p style="font-size: 12px;">{{$site_description}}</p>
-        <h2>INVOICE</h2>
+        <p style="font-size: 12px;">{{$site_description}}</p><h2>INVOICE</h2>
         <p>Invoice Number: #{{ str_pad($invoiceNumber, 6, '0', STR_PAD_LEFT) }}</p>
         <p>Date: {{ $date }}</p>
         <p>Time: {{ $time }}</p>
+        <p>Cashier: {{ $order->user->name ?? 'N/A' }}</p>
+        @if(!empty($order->mileage))
+        <p>Mileage: {{ $order->mileage }}</p>
+        @endif
     </div>
+
+    {{-- ── Customer details (two-column), shown only when a customer is linked ── --}}
+    @if($order->customer)
+    <div class="customer-section">
+        <h3>CUSTOMER DETAILS</h3>
+        <table class="two-col">
+            <tbody>
+                <tr>
+                    <td class="col-label">Name</td>
+                    <td class="col-value">
+                        {{ trim($order->customer->first_name . ' ' . $order->customer->last_name) }}
+                    </td>
+                </tr>
+                @if(!empty($order->customer->vehicle_identifier))
+                <tr>
+                    <td class="col-label">Vehicle No.</td>
+                    <td class="col-value">{{ $order->customer->vehicle_identifier }}</td>
+                </tr>
+                @endif
+                @if(!empty($order->customer->vehicle_model))
+                <tr>
+                    <td class="col-label">Vehicle Model</td>
+                    <td class="col-value">{{ $order->customer->vehicle_model }}</td>
+                </tr>
+                @endif
+                @if(!empty($order->customer->phone))
+                <tr>
+                    <td class="col-label">Phone</td>
+                    <td class="col-value">{{ $order->customer->phone }}</td>
+                </tr>
+                @endif
+            </tbody>
+        </table>
+    </div>
+    @endif
 
     <table>
         <thead>

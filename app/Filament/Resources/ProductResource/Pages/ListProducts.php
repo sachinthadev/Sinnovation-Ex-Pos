@@ -69,7 +69,7 @@ class ListProducts extends ListRecords
             ]),
             Action::make('inventory')
                 ->label('Low Stock')
-                ->url(fn () => url('/admin/products/inventory'))
+                ->url(fn () => url('/admin/inventory'))
                 ->icon('heroicon-o-cube-transparent'),
             CreateAction::make()->color('success'),
         ];

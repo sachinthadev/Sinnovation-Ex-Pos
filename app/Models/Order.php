@@ -10,7 +10,9 @@ class Order extends Model
 {
     protected $fillable = [
         'customer_identifier',
-        'total_price'
+        'total_price',
+        'mileage',
+        'user_id'
     ];
 
     public function scopeOpenToday(Builder $query): Builder
@@ -38,6 +40,11 @@ class Order extends Model
     public function items()
     {
         return $this->hasMany(OrderItem::class);
+    }
+
+    public function user()
+    {
+        return $this->belongsTo(User::class);
     }
 
     public function payments()

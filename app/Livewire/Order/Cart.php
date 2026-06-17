@@ -36,7 +36,7 @@ class Cart extends Component
         $this->orderId = $orderId;  
 
         $this->cartItems = OrderItem::where('order_id', $orderId)            
-                            ->orderBy('id', 'DESC')
+                            ->orderBy('id', 'ASC')
                             ->get();    
         $this->currency_symbol = config('settings.currency_symbol');
     }
@@ -95,7 +95,7 @@ class Cart extends Component
     public function updateCart()
     {
         $this->cartItems = OrderItem::where('order_id', $this->orderId)            
-                                        ->orderBy('id', 'DESC')
+                                        ->orderBy('id', 'ASC')
                                         ->get();
 
         $order = Order::find($this->orderId);
@@ -114,7 +114,7 @@ class Cart extends Component
     public function cartUpdatedFromItem()
     {
         $this->cartItems = OrderItem::where('order_id', $this->orderId)            
-                                        ->orderBy('id', 'DESC')
+                                        ->orderBy('id', 'ASC')
                                         ->get();
 
         $order = Order::find($this->orderId);

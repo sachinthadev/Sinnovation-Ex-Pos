@@ -59,8 +59,45 @@
         }
         .invoice-footer {
             text-align: center;
-            font-size: 10px;
+            font-size: 13px;
             margin-top: 10mm;
+        }
+        .invoice-footer p {
+            margin: 1mm 0;
+        }
+        .header-title-row {
+            display: table;
+            width: 100%;
+        }
+        .header-title-row .site-name {
+            display: table-cell;
+            text-align: left;
+            font-family: 'Courier New', Courier, monospace;
+            font-size: 16px;
+            font-weight: bold;
+            vertical-align: middle;
+        }
+        .header-title-row .invoice-label {
+            display: table-cell;
+            text-align: right;
+            font-family: 'Courier New', Courier, monospace;
+            font-size: 14px;
+            font-weight: bold;
+            vertical-align: middle;
+        }
+        .date-time-row {
+            display: table;
+            width: 100%;
+        }
+        .date-time-row .col-date {
+            display: table-cell;
+            text-align: left;
+            font-size: 13px;
+        }
+        .date-time-row .col-time {
+            display: table-cell;
+            text-align: right;
+            font-size: 13px;
         }
         .text-center{
             text-align: center
@@ -98,14 +135,6 @@
             border-bottom: 1px dashed #999;
             padding: 2mm 0;
         }
-        .customer-section h3 {
-            text-align: center;
-            font-family: 'Courier New', Courier, monospace;
-            font-size: 12px;
-            margin: 0 0 2mm 0;
-            padding: 0;
-            letter-spacing: 1px;
-        }
         .two-col {
             width: 100%;
             border-collapse: collapse;
@@ -122,52 +151,60 @@
         .two-col .col-value {
             width: 55%;
         }
+        @page {
+    margin: 3mm;
+}
+
+table,
+tr,
+td,
+th {
+    page-break-inside: avoid;
+}
+
+.invoice-header,
+.invoice-footer,
+.customer-section {
+    page-break-inside: avoid;
+}
     </style>
 </head>
 <body>
     <div class="invoice-header">
         <span style="margin-top: 2mm">&nbsp;&nbsp;</span>
-        <h1 class="text-center" style="margin-bottom:0; font-family: 'Courier New', Courier, monospace">
-            {{$site_name}}
-        </h1>
-        <p style="font-size: 12px;">{{$site_description}}</p><h2>INVOICE</h2>
+        <div class="header-title-row">
+            <span class="site-name">{{$site_name}}</span>
+            <span class="invoice-label">INVOICE</span>
+        </div>
+        <p style="font-size: 12px;">{{$site_description}}</p>
+
         <p>Invoice Number: #{{ str_pad($invoiceNumber, 6, '0', STR_PAD_LEFT) }}</p>
-        <p>Date: {{ $date }}</p>
-        <p>Time: {{ $time }}</p>
+        <div class="date-time-row">
+            <span class="col-date">Date: {{ $date }}</span>
+            <span class="col-time">Time: {{ $time }}</span>
+        </div>
         <p>Cashier: {{ $order->user->name ?? 'N/A' }}</p>
-        @if(!empty($order->mileage))
-        <p>Mileage: {{ $order->mileage }}</p>
-        @endif
     </div>
 
-    {{-- ── Customer details (two-column), shown only when a customer is linked ── --}}
-    @if($order->customer)
+    {{-- ── Customer details: vehicle number and mileage only ── --}}
+    @php
+        $showCustomerSection = ($order->customer && !empty($order->customer->vehicle_identifier))
+                            || !empty($order->mileage);
+    @endphp
+    @if($showCustomerSection)
     <div class="customer-section">
-        <h3>CUSTOMER DETAILS</h3>
         <table class="two-col">
             <tbody>
-                <tr>
-                    <td class="col-label">Name</td>
-                    <td class="col-value">
-                        {{ trim($order->customer->first_name . ' ' . $order->customer->last_name) }}
-                    </td>
-                </tr>
-                @if(!empty($order->customer->vehicle_identifier))
+                @if($order->customer && !empty($order->customer->vehicle_identifier))
                 <tr>
                     <td class="col-label">Vehicle No.</td>
                     <td class="col-value">{{ $order->customer->vehicle_identifier }}</td>
                 </tr>
                 @endif
-                @if(!empty($order->customer->vehicle_model))
+                @if(!empty($order->mileage))
                 <tr>
-                    <td class="col-label">Vehicle Model</td>
-                    <td class="col-value">{{ $order->customer->vehicle_model }}</td>
-                </tr>
-                @endif
-                @if(!empty($order->customer->phone))
-                <tr>
-                    <td class="col-label">Phone</td>
-                    <td class="col-value">{{ $order->customer->phone }}</td>
+                    <td class="col-label">Mileage</td>
+                    <td class="col-value">{{ $order->mileage }}</td>
                 </tr>
                 @endif
             </tbody>

@@ -36,7 +36,7 @@ class Cart extends Component
     {
         $this->cartItems = CartModel::with('product')
                             ->where('user_id', auth()->user()->id)
-                            ->orderBy('id', 'DESC')
+                            ->orderBy('id', 'ASC')
                             ->get();    
 
         $this->currency_symbol = config('settings.currency_symbol');
@@ -54,7 +54,7 @@ class Cart extends Component
     {
         $this->cartItems = CartModel::with('product')
                             ->where('user_id', auth()->user()->id)
-                            ->orderBy('id', 'DESC')
+                            ->orderBy('id', 'ASC')
                             ->get();
 
         $this->currency_symbol = config('settings.currency_symbol');
@@ -73,7 +73,7 @@ class Cart extends Component
     {
         $this->cartItems = CartModel::with('product')
                             ->where('user_id', auth()->user()->id)
-                            ->orderBy('id', 'DESC')
+                            ->orderBy('id', 'ASC')
                             ->get();
 
         $this->currency_symbol = config('settings.currency_symbol');
@@ -151,7 +151,10 @@ class Cart extends Component
         $order->total_price = $total_price;
         $order->save();
 
-        $this->cartItems = CartModel::where('user_id', auth()->user()->id)->delete();  
+        $this->cartItems = CartModel::where('user_id', auth()->user()->id)->delete();
+
+        // Clear the selected customer so the next invoice starts with a blank search
+        session()->forget('customer_identifier');
 
         $this->dispatch('checkout-completed');
 

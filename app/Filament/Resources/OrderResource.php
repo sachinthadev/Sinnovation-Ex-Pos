@@ -63,6 +63,10 @@ class OrderResource extends Resource
                             ->formatStateUsing(fn ($record) => $record->customer->first_name . ' ' . $record->customer->last_name),
                 TextColumn::make('total_price')
                             ->formatStateUsing(fn ($record) => $currency_symbol.$record->total_price)->sortable(),
+                TextColumn::make('mileage')
+                            ->label('Mileage')
+                            ->sortable()
+                            ->placeholder('—'),
                 TextColumn::make('created_at')->sortable()->dateTime(),
             ])
             ->defaultSort('id', 'desc')

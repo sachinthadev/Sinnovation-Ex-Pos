@@ -55,8 +55,8 @@ class CustomerResource extends Resource
                     ->helperText('Vehicle number or chassis number.'),
                 TextInput::make('vehicle_model')
                     ->label('Vehicle Model')
-                    ->nullable()
-                    ->helperText('Optional vehicle model.'),
+                    ->required()
+                    ->helperText('Required vehicle model.'),
                 Textarea::make('address')
                     ->nullable(),
                 \Filament\Schemas\Components\Section::make('Statistics')

@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <style>
         body {
-            font-family:"terminus";
+             font-family: 'Inter', 'Roboto', 'Helvetica Neue', Arial, sans-serif;
             font-size: 14px;
             margin: 0;
             padding: 0;
@@ -50,7 +50,7 @@
             margin-bottom: 3mm;
         }
         .invoice-header h1{
-            font-size: 16px;
+            font-size: 22px;
             margin-top: 3mm;
         }
         .invoice-header p {
@@ -72,15 +72,15 @@
         .header-title-row .site-name {
             display: table-cell;
             text-align: left;
-            font-family: 'Courier New', Courier, monospace;
-            font-size: 16px;
+           font-family: 'Inter', 'Roboto', 'Helvetica Neue', Arial, sans-serif;
+            font-size: 22px;
             font-weight: bold;
             vertical-align: middle;
         }
         .header-title-row .invoice-label {
             display: table-cell;
             text-align: right;
-            font-family: 'Courier New', Courier, monospace;
+            font-family: 'Inter', 'Roboto', 'Helvetica Neue', Arial, sans-serif;
             font-size: 14px;
             font-weight: bold;
             vertical-align: middle;
@@ -109,7 +109,7 @@
             padding-top:0.5mm; 
             text-align:center; 
             padding-bottom:0mm;
-            font-family: 'Courier New', Courier, monospace;
+            font-family: 'Inter', 'Roboto', 'Helvetica Neue', Arial, sans-serif;
             font-size: 14px;
         }
         .p-x-1{
@@ -121,7 +121,7 @@
             padding-right:2mm;
         }
         table th{
-            font-family: 'Courier New', Courier, monospace;
+            font-family: 'Inter', 'Roboto', 'Helvetica Neue', Arial, sans-serif;
             font-size: 12px;
         }
         .mt-0{
@@ -174,7 +174,7 @@ th {
         <span style="margin-top: 2mm">&nbsp;&nbsp;</span>
         <div class="header-title-row">
             <span class="site-name">{{$site_name}}</span>
-            <span class="invoice-label">INVOICE</span>
+            <!-- <span class="invoice-label">INVOICE</span> -->
         </div>
         <p style="font-size: 12px;">{{$site_description}}</p>
 

@@ -3,6 +3,16 @@
     @if (session()->has('error'))
         <p class="text-red-500">{{ session('error') }}</p>
     @endif
+
+    <div class="flex flex-wrap gap-3 mb-3">
+        <span class="inline-flex items-center rounded-full bg-slate-100 px-3 py-1 text-sm font-medium text-slate-800">
+            Products added: {{ $productCount }}
+        </span>
+        <span class="inline-flex items-center rounded-full bg-slate-100 px-3 py-1 text-sm font-medium text-slate-800">
+            Services added: {{ $serviceCount }}
+        </span>
+    </div>
+
     <div class="overflow-x-auto md:overflow-x-none">
         <table class="min-w-[600px] min-w-full border border-gray-300">
             <thead>

@@ -24,6 +24,8 @@ class Cart extends Component
     private $currency_symbol;
 
     public $orderId;
+    public $serviceCount = 0;
+    public $productCount = 0;
 
     protected $rules = [
         'newService.name' => 'required|string|max:255',
@@ -39,6 +41,14 @@ class Cart extends Component
                             ->orderBy('id', 'ASC')
                             ->get();    
         $this->currency_symbol = config('settings.currency_symbol');
+        $this->computeCounts();
+    }
+
+    protected function computeCounts()
+    {
+        $items = collect($this->cartItems);
+        $this->productCount = $items->whereNotNull('product_id')->count();
+        $this->serviceCount = $items->whereNull('product_id')->count();
     }
 
     
@@ -98,6 +108,8 @@ class Cart extends Component
                                         ->orderBy('id', 'ASC')
                                         ->get();
 
+        $this->computeCounts();
+
         $order = Order::find($this->orderId);
         
         $total_price = 0;
@@ -116,6 +128,8 @@ class Cart extends Component
         $this->cartItems = OrderItem::where('order_id', $this->orderId)            
                                         ->orderBy('id', 'ASC')
                                         ->get();
+
+        $this->computeCounts();
 
         $order = Order::find($this->orderId);
 

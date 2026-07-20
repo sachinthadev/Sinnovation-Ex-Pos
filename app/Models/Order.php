@@ -12,7 +12,8 @@ class Order extends Model
         'customer_identifier',
         'total_price',
         'mileage',
-        'user_id'
+        'user_id',
+        'settlement_status'
     ];
 
     public function scopeOpenToday(Builder $query): Builder
@@ -87,5 +88,10 @@ class Order extends Model
     public function formattedReceivedAmount()
     {
         return number_format($this->receivedAmount(), 2);
+    }
+
+    public function getSettlementStatusLabelAttribute(): string
+    {
+        return $this->settlement_status === 'cash_received' ? 'Cash Received' : 'Pending';
     }
 }

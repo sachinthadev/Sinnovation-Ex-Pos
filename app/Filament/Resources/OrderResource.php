@@ -67,6 +67,10 @@ class OrderResource extends Resource
                             ->label('Mileage')
                             ->sortable()
                             ->placeholder('—'),
+                TextColumn::make('settlement_status')
+                            ->label('Status')
+                            ->sortable()
+                            ->formatStateUsing(fn ($record) => $record->settlement_status_label),
                 TextColumn::make('created_at')->sortable()->dateTime(),
             ])
             ->defaultSort('id', 'desc')

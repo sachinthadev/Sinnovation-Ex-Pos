@@ -26,6 +26,8 @@ class Cart extends Component
     public $orderId;
     public $serviceCount = 0;
     public $productCount = 0;
+    public $isSettled = false;
+    public $settlementStatus = 'pending';
 
     protected $rules = [
         'newService.name' => 'required|string|max:255',
@@ -41,6 +43,13 @@ class Cart extends Component
                             ->orderBy('id', 'ASC')
                             ->get();    
         $this->currency_symbol = config('settings.currency_symbol');
+
+        $order = Order::find($orderId);
+        if ($order) {
+            $this->settlementStatus = $order->settlement_status ?? 'pending';
+            $this->isSettled = $this->settlementStatus === 'cash_received';
+        }
+
         $this->computeCounts();
     }
 
@@ -146,6 +155,20 @@ class Cart extends Component
     public function openCustomServiceRow()
     {
         $this->addServiceRow();
+    }
+
+    public function setSettlementStatus(bool $isSettled)
+    {
+        $order = Order::find($this->orderId);
+
+        if (! $order) {
+            return;
+        }
+
+        $this->isSettled = $isSettled;
+        $this->settlementStatus = $isSettled ? 'cash_received' : 'pending';
+        $order->settlement_status = $this->settlementStatus;
+        $order->save();
     }
 
     public function checkout(){ 

@@ -1,16 +1,45 @@
-<div class="">
+<div class="" x-data="{ showConfirm: false, pendingChecked: false }">
 
     @if (session()->has('error'))
         <p class="text-red-500">{{ session('error') }}</p>
     @endif
 
-    <div class="flex flex-wrap gap-3 mb-3">
+    <div class="flex flex-wrap gap-3 mb-3 items-center">
         <span class="inline-flex items-center rounded-full bg-slate-100 px-3 py-1 text-sm font-medium text-slate-800">
             Products added: {{ $productCount }}
         </span>
         <span class="inline-flex items-center rounded-full bg-slate-100 px-3 py-1 text-sm font-medium text-slate-800">
             Services added: {{ $serviceCount }}
         </span>
+        <label class="inline-flex items-center gap-2 rounded-full border border-green-200 bg-green-50 px-3 py-1 text-sm font-medium text-green-700">
+            <input type="checkbox" class="rounded border-gray-300 text-green-600 focus:ring-green-500" @checked($isSettled) x-on:change="if (event.target.checked) { pendingChecked = true; showConfirm = true; event.target.checked = false; } else { $wire.setSettlementStatus(false); }">
+            <span>Verify</span>
+        </label>
+
+        <div x-show="showConfirm" x-transition class="fixed inset-0 z-[60] flex items-center justify-center bg-gray-900/60 px-4 backdrop-blur-sm">
+            <div class="w-full max-w-md rounded-2xl border border-gray-200 bg-white p-6 shadow-2xl dark:border-gray-700 dark:bg-gray-900">
+                <div class="flex items-center gap-3">
+                    <div class="flex h-10 w-10 items-center justify-center rounded-full bg-green-100 text-green-600 dark:bg-green-500/10 dark:text-green-400">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                            <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-7.5 7.5a1 1 0 01-1.414 0l-3.5-3.5a1 1 0 111.414-1.414L8.5 12.086l6.793-6.793a1 1 0 011.414 0z" clip-rule="evenodd" />
+                        </svg>
+                    </div>
+                    <div>
+                        <h3 class="text-lg font-semibold text-gray-900 dark:text-white">Settle this order?</h3>
+                        <p class="mt-1 text-sm text-gray-600 dark:text-gray-300">This will mark the order as cash received.</p>
+                    </div>
+                </div>
+
+                <div class="mt-6 flex flex-wrap justify-end gap-2">
+                    <button type="button" @click="showConfirm = false; pendingChecked = false" class="inline-flex min-w-[90px] items-center justify-center rounded-lg border border-gray-300 bg-white px-4 py-2 text-sm font-semibold text-gray-700 transition hover:bg-gray-100 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-200 dark:hover:bg-gray-700">
+                        Cancel
+                    </button>
+                    <button type="button" @click="showConfirm = false; $wire.setSettlementStatus(true); window.location.reload();" class="inline-flex min-w-[90px] items-center justify-center rounded-lg bg-green-600 px-4 py-2 text-sm font-semibold text-white transition hover:bg-green-700">
+                        Confirm
+                    </button>
+                </div>
+            </div>
+        </div>
     </div>
 
     <div class="overflow-x-auto md:overflow-x-none">

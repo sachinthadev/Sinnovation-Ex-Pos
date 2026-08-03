@@ -3,7 +3,7 @@
 namespace App\Filament\Resources;
 
 use Filament\Schemas\Schema;
-use Filament\Actions\EditAction;
+use Filament\Actions\Action;
 use Filament\Actions\DeleteAction;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteBulkAction;
@@ -11,6 +11,7 @@ use Maatwebsite\Excel\Excel;
 use App\Filament\Resources\OrderResource\Pages\CompletedOrders;
 use App\Filament\Resources\OrderResource\Pages\ListOrders;
 use App\Filament\Resources\OrderResource\Pages\EditOrder;
+use App\Filament\Resources\OrderResource\Pages\ViewOrder;
 use App\Filament\Resources\OrderResource\Pages;
 use App\Models\Order;
 use App\Models\Setting;
@@ -19,6 +20,7 @@ use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
+use Illuminate\Support\Facades\Auth;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\Filter;
 use Filament\Forms\Components\DatePicker;
@@ -102,22 +104,29 @@ class OrderResource extends Resource
                 }),
             ])
             ->recordActions([
-                EditAction::make()->visible(fn () => auth()->user()->role === 'admin'),
-                DeleteAction::make()->visible(fn () => auth()->user()->role === 'admin'),
+                Action::make('edit')
+                    ->label('Edit')
+                    ->url(fn (Order $record) => OrderResource::getUrl('edit', ['record' => $record]))
+                    ->visible(fn () => Auth::check() && Auth::user()?->role === 'admin'),
+                DeleteAction::make()->visible(fn () => Auth::check() && Auth::user()?->role === 'admin'),
             ])
             ->toolbarActions([
                 BulkActionGroup::make([
-                    DeleteBulkAction::make()->visible(fn () => auth()->user()->role === 'admin'),
+                    DeleteBulkAction::make()->visible(fn () => Auth::check() && Auth::user()?->role === 'admin'),
                     ExportBulkAction::make()->exports([
                         ExcelExport::make()
-                            ->fromTable()
                             ->withFilename(fn ($resource) => $resource::getModelLabel() . '-' . date('Y-m-d'))
                             ->withWriterType(Excel::CSV)
                             ->withColumns([
+                                Column::make('id')->heading('ID'),
+                                Column::make('customer.vehicle_identifier')->heading('Vehicle Number'),
                                 Column::make('customer.phone')->heading('Mobile'),
                                 Column::make('customer.email')->heading('Email'),
                                 Column::make('customer.address')->heading('Address'),
-                                Column::make('updated_at'),
+                                Column::make('total_price')->heading('Total Price'),
+                                Column::make('mileage')->heading('Mileage'),
+                                Column::make('settlement_status')->heading('Status'),
+                                Column::make('created_at')->heading('Created At'),
                             ])
                     ])
                 ]),
@@ -142,6 +151,7 @@ class OrderResource extends Resource
         return [
             'index' => ListOrders::route('/'),
             'completed' => CompletedOrders::route('/completed'),
+            'view' => ViewOrder::route('/{record}'),
             // 'create' => Pages\CreateOrder::route('/create'),
             'edit' => EditOrder::route('/{record}/edit'),
         ];

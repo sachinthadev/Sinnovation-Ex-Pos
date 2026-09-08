@@ -59,6 +59,11 @@ class OrderResource extends Resource
                     ->label('Vehicle Number')
                     ->searchable()
                     ->sortable(),
+                TextColumn::make('customer.vehicle_model')
+                    ->label('Vehicle Model')
+                    ->searchable()
+                    ->sortable()
+                    ->placeholder('-'),
                 TextColumn::make('customer.first_name')
                             ->label('Customer Name')
                             ->searchable()

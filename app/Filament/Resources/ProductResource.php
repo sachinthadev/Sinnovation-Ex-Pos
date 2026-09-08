@@ -52,6 +52,10 @@ class ProductResource extends Resource
                         ->label('Part Number')
                         ->maxLength(255)
                         ->helperText('Optional. Searchable by product part number.'),
+                    TextInput::make('store_location')
+                        ->label('Store Location')
+                        ->maxLength(255)
+                        ->placeholder('e.g. Shelf A1'),
                     TextInput::make('price')
                         ->numeric()
                         ->required(),
@@ -84,6 +88,7 @@ class ProductResource extends Resource
                                 ->square(),
                 TextColumn::make('barcode')->searchable(),
                 TextColumn::make('part_number')->label('Part Number')->searchable()->sortable(),
+                TextColumn::make('store_location')->label('Store Location')->searchable()->sortable(),
                 TextInputColumn::make('quantity')->type('number')  
                                 ->sortable() 
                                 ->width(10)
@@ -109,6 +114,7 @@ class ProductResource extends Resource
                             Column::make('name')->heading('Name'),
                             Column::make('barcode')->heading('Barcode'),
                             Column::make('part_number')->heading('Part Number'),
+                            Column::make('store_location')->heading('Store Location'),
                             Column::make('price')->heading('Price'),
                             Column::make('tax')->heading('Tax'),
                             Column::make('quantity')->heading('Quantity'),

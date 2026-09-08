@@ -14,6 +14,7 @@ class Product extends Model
         'image',
         'barcode',
         'part_number',
+        'store_location',
         'price',
         'tax',
         'quantity',

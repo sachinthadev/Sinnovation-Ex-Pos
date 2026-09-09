@@ -205,12 +205,14 @@ class Cart extends Component
         if (! $service) {
             $this->newService['name'] = '';
             $this->newService['price'] = '0.00';
+            $this->newService['commission_percentage'] = 50;
 
             return;
         }
 
         $this->newService['name'] = $service->name;
         $this->newService['price'] = $service->price;
+        $this->newService['commission_percentage'] = (float) ($service->commission_percentage ?? 0);
     }
 
     public function cancelCustomService()
@@ -241,12 +243,16 @@ class Cart extends Component
             return $this->addError('serviceId', 'Please select an active service.');
         }
 
+        $commissionPercentage = $service
+            ? (float) ($service->commission_percentage ?? 0)
+            : 50;
+
         CartModel::create([
             'user_id' => Auth::id(),
             'product_id' => null,
             'service_id' => $this->serviceId ?: null,
             'employee_id' => $this->employeeId,
-            'commission_percentage' => 50,
+            'commission_percentage' => $commissionPercentage,
             'name' => $this->newService['name'],
             'price' => floatval($this->newService['price']),
             'quantity' => $this->newService['quantity'],

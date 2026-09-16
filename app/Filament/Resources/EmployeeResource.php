@@ -3,9 +3,12 @@
 namespace App\Filament\Resources;
 
 use App\Filament\Resources\EmployeeResource\Pages\ListEmployees;
+use App\Filament\Resources\EmployeeResource\Pages\EditEmployee;
 use App\Models\Employee;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteBulkAction;
+use Filament\Actions\DeleteAction;
+use Filament\Actions\EditAction;
 use Filament\Schemas\Schema;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
@@ -53,6 +56,10 @@ class EmployeeResource extends Resource
                 TextColumn::make('labour_type')->label('Labour Type')->searchable()->sortable(),
                 TextColumn::make('created_at')->dateTime()->sortable(),
             ])
+            ->recordActions([
+                EditAction::make()->visible(fn () => Auth::check() && Auth::user()?->role === 'admin'),
+                DeleteAction::make()->visible(fn () => Auth::check() && Auth::user()?->role === 'admin'),
+            ])
             ->toolbarActions([
                 BulkActionGroup::make([
                     DeleteBulkAction::make()->visible(fn () => Auth::check() && Auth::user()?->role === 'admin'),
@@ -64,6 +71,7 @@ class EmployeeResource extends Resource
     {
         return [
             'index' => ListEmployees::route('/'),
+            'edit' => EditEmployee::route('/{record}/edit'),
         ];
     }
 }

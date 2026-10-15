@@ -2,6 +2,7 @@
 
 namespace App\Filament\Pages;
 
+use App\Filament\Pages\Account as AccountPage;
 use App\Models\OrderItem;
 use Carbon\Carbon;
 use Filament\Actions\Action;
@@ -147,7 +148,12 @@ class Ledger extends Page implements HasTable
             Action::make('expense')
                 ->label('Expense')
                 ->icon('heroicon-o-arrow-trending-down')
-                ->color('danger'),
+                ->color('danger')
+                ->url(url('/admin/expense')),
+            Action::make('account')
+                ->label('Account')
+                ->icon('heroicon-o-building-library')
+                ->url(AccountPage::getUrl()),
             Action::make('salary')
                 ->label('Salary')
                 ->icon('heroicon-o-banknotes')

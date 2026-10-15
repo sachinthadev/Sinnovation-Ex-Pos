@@ -3,6 +3,7 @@
 namespace App\Filament\Pages;
 
 use App\Filament\Pages\Account as AccountPage;
+use App\Models\Order;
 use App\Models\OrderItem;
 use Carbon\Carbon;
 use Filament\Actions\Action;
@@ -78,7 +79,11 @@ class Ledger extends Page implements HasTable
     protected function getViewData(): array
     {
         $monthStart = $this->monthStart();
+        $monthEnd = $monthStart->copy()->endOfMonth();
         $serviceItems = $this->salaryQuery()->get();
+        $monthlyIncome = Order::completedOrders()
+            ->whereBetween('created_at', [$monthStart, $monthEnd])
+            ->sum('total_price');
 
         $employeeSalaries = $serviceItems
             ->map(function (OrderItem $item): array {
@@ -101,6 +106,7 @@ class Ledger extends Page implements HasTable
         return [
             'employeeSalaries' => $employeeSalaries,
             'totalSalary' => $employeeSalaries->sum('total_salary'),
+            'monthlyIncome' => (float) $monthlyIncome,
             'currency_symbol' => config('settings.currency_symbol'),
             'selectedMonth' => $monthStart->format('F Y'),
             'monthOptions' => collect(range(0, 11))->mapWithKeys(function (int $offset): array {

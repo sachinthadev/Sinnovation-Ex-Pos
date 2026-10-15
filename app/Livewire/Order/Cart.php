@@ -7,6 +7,8 @@ use App\Models\Cart as CartModel;
 use App\Models\Order;
 use App\Models\OrderItem;
 use App\Models\Product;
+use App\Models\Employee;
+use App\Models\Service;
 use App\Models\Setting;
 use Livewire\Attributes\On; 
 
@@ -19,7 +21,11 @@ class Cart extends Component
         'name' => '',
         'price' => '0.00',
         'quantity' => 1,
+        'commission_percentage' => 50,
     ];
+
+    public $serviceId = '';
+    public $employeeId = '';
 
     private $currency_symbol;
 
@@ -33,6 +39,8 @@ class Cart extends Component
         'newService.name' => 'required|string|max:255',
         'newService.price' => 'required|numeric|min:0',
         'newService.quantity' => 'required|integer|min:1',
+        'serviceId' => 'nullable|exists:services,id',
+        'employeeId' => 'required|exists:employees,id',
     ];
 
     public function mount($orderId)
@@ -64,26 +72,61 @@ class Cart extends Component
     public function render()
     {
         $this->currency_symbol = config('settings.currency_symbol');
-        return view('livewire.order.cart', ['cartItems' => $this->cartItems, 'currency_symbol' => $this->currency_symbol]);
+        return view('livewire.order.cart', [
+            'cartItems' => $this->cartItems,
+            'currency_symbol' => $this->currency_symbol,
+            'services' => Service::query()
+                ->where('type', 'service')
+                ->where('status', true)
+                ->orderBy('name')
+                ->get(),
+            'employees' => Employee::query()->orderBy('name')->get(),
+        ]);
     }
 
     public function addServiceRow()
     {
         $this->newServiceVisible = true;
+        $this->serviceId = '';
+        $this->employeeId = '';
         $this->newService = [
             'name' => '',
             'price' => '0.00',
             'quantity' => 1,
+            'commission_percentage' => 50,
         ];
+    }
+
+    public function updatedServiceId($serviceId): void
+    {
+        $service = Service::query()
+            ->where('type', 'service')
+            ->where('status', true)
+            ->find($serviceId);
+
+        if (! $service) {
+            $this->newService['name'] = '';
+            $this->newService['price'] = '0.00';
+            $this->newService['commission_percentage'] = 50;
+
+            return;
+        }
+
+        $this->newService['name'] = $service->name;
+        $this->newService['price'] = $service->price;
+        $this->newService['commission_percentage'] = (float) ($service->commission_percentage ?? 0);
     }
 
     public function cancelCustomService()
     {
         $this->newServiceVisible = false;
+        $this->serviceId = '';
+        $this->employeeId = '';
         $this->newService = [
             'name' => '',
             'price' => '0.00',
             'quantity' => 1,
+            'commission_percentage' => 50,
         ];
     }
 
@@ -91,9 +134,25 @@ class Cart extends Component
     {
         $this->validate();
 
+        $service = $this->serviceId
+            ? Service::query()
+                ->where('type', 'service')
+                ->where('status', true)
+                ->find($this->serviceId)
+            : null;
+
+        if ($this->serviceId && ! $service) {
+            return $this->addError('serviceId', 'Please select an active service.');
+        }
+
         OrderItem::create([
             'order_id' => $this->orderId,
             'product_id' => null,
+            'service_id' => $this->serviceId ?: null,
+            'employee_id' => $this->employeeId,
+            'commission_percentage' => $service
+                ? (float) ($service->commission_percentage ?? 0)
+                : 50,
             'name' => $this->newService['name'],
             'price' => floatval($this->newService['price']),
             'quantity' => $this->newService['quantity'],
@@ -101,10 +160,13 @@ class Cart extends Component
         ]);
 
         $this->newServiceVisible = false;
+        $this->serviceId = '';
+        $this->employeeId = '';
         $this->newService = [
             'name' => '',
             'price' => '0.00',
             'quantity' => 1,
+            'commission_percentage' => 50,
         ];
 
         $this->updateCart();

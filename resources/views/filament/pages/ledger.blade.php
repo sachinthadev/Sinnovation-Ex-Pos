@@ -5,22 +5,7 @@
 				<h2 class="text-lg font-semibold text-gray-950 dark:text-white">Employee Salary</h2>
 				<p class="mt-1 text-sm text-gray-500 dark:text-gray-400">Commission summary for {{ $selectedMonth }}.</p>
 			</div>
-			<div class="mt-4 grid gap-4 sm:grid-cols-2">
-				<div class="rounded-xl border border-gray-200 bg-white p-5 shadow-sm dark:border-gray-700 dark:bg-gray-900">
-					<div class="flex items-center gap-3">
-						<div class="flex size-10 shrink-0 items-center justify-center rounded-lg bg-success-50 text-success-600 dark:bg-success-400/10 dark:text-success-400">
-							<x-filament::icon icon="heroicon-o-arrow-trending-up" class="size-5" />
-						</div>
-						<div>
-							<div class="text-sm font-medium text-gray-500 dark:text-gray-400">Monthly total income</div>
-							<div class="mt-1 text-2xl font-bold tabular-nums text-gray-950 dark:text-white">
-								{{ $currency_symbol }}{{ number_format($monthlyIncome, 2) }}
-							</div>
-						</div>
-					</div>
-					<div class="mt-3 text-xs text-gray-500 dark:text-gray-400">Completed orders for {{ $selectedMonth }}</div>
-				</div>
-
+			<div class="mt-4 grid gap-4">
 				<div class="rounded-xl border border-gray-200 bg-white p-5 shadow-sm dark:border-gray-700 dark:bg-gray-900">
 					<div class="flex items-center gap-3">
 						<div class="flex size-10 shrink-0 items-center justify-center rounded-lg bg-warning-50 text-warning-600 dark:bg-warning-400/10 dark:text-warning-400">

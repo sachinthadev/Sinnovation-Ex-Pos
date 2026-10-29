@@ -3,12 +3,10 @@
 namespace App\Filament\Pages;
 
 use App\Filament\Pages\Account as AccountPage;
-use App\Models\Order;
 use App\Models\OrderItem;
 use Carbon\Carbon;
 use Filament\Actions\Action;
 use Filament\Pages\Page;
-use Filament\Tables\Columns\Summarizers\Summarizer;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Concerns\InteractsWithTable;
 use Filament\Tables\Contracts\HasTable;
@@ -54,12 +52,6 @@ class Ledger extends Page implements HasTable
                 TextColumn::make('price')
                     ->label('Price')
                     ->formatStateUsing(fn ($state): string => $currencySymbol . number_format((float) $state, 2))
-                    ->summarize(
-                        Summarizer::make()
-                            ->label('Total Collection')
-                            ->using(fn (): float => $this->monthlyIncome())
-                            ->formatStateUsing(fn ($state): string => $currencySymbol . number_format((float) $state, 2)),
-                    )
                     ->sortable(),
                 TextColumn::make('quantity')
                     ->label('Qty')
@@ -87,6 +79,7 @@ class Ledger extends Page implements HasTable
     {
         $monthStart = $this->monthStart();
         $serviceItems = $this->salaryQuery()->get();
+        $monthlyIncome = $serviceItems->sum(fn (OrderItem $item): float => (float) $item->price * (int) $item->quantity);
 
         $employeeSalaries = $serviceItems
             ->map(function (OrderItem $item): array {
@@ -109,6 +102,7 @@ class Ledger extends Page implements HasTable
         return [
             'employeeSalaries' => $employeeSalaries,
             'totalSalary' => $employeeSalaries->sum('total_salary'),
+            'monthlyIncome' => $monthlyIncome,
             'currency_symbol' => config('settings.currency_symbol'),
             'selectedMonth' => $monthStart->format('F Y'),
             'monthOptions' => collect(range(0, 11))->mapWithKeys(function (int $offset): array {
@@ -136,15 +130,6 @@ class Ledger extends Page implements HasTable
     protected function monthStart(): Carbon
     {
         return Carbon::createFromFormat('Y-m', $this->month)->startOfMonth();
-    }
-
-    protected function monthlyIncome(): float
-    {
-        $monthStart = $this->monthStart();
-
-        return (float) Order::completedOrders()
-            ->whereBetween('created_at', [$monthStart, $monthStart->copy()->endOfMonth()])
-            ->sum('total_price');
     }
 
     protected function calculateSalary(OrderItem $item): float
